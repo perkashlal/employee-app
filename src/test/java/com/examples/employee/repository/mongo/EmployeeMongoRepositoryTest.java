@@ -97,9 +97,8 @@ class EmployeeMongoRepositoryTest {
 	public void testFindByIdFound() {
 		addTestEmployeeToDatabase("1", "Mayoor");
 		addTestEmployeeToDatabase("2", "Sunil");
-		
-		assertThat(employeeRepository.findById("2"))
-			.isEqualTo(new Employee("2", "Sunil"));
+		Employee found = employeeRepository.findById("2");
+		assertThat(found).isEqualTo(new Employee("2", "Sunil"));
 	}
 	private void addTestEmployeeToDatabase(String id, String name) {
 		employeeCollection.insertOne(

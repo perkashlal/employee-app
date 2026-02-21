@@ -29,10 +29,9 @@ public class EmployeeMongoRepository implements EmployeeRepository {
 	}
 	public Employee findById(String id) {
 		Document d = employeeCollection.find(com.mongodb.client.model.Filters.eq("id", id)).first();
-		if (d != null) {
-			return new Employee("" + d.get("id"), "" + d.get("name"));
-		}
-		return null;
-		 
+		return (d != null) 
+				? new Employee(d.getString("id"), d.getString("name")) 
+				: null;
+		
 	}
 }
