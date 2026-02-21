@@ -27,5 +27,7 @@ public class EmployeeMongoRepository implements EmployeeRepository {
 			.map(d -> new Employee("" + d.get("id"), "" + d.get("name")))
 			.collect(Collectors.toList());
 	}
-	
+	public Employee findById(String id) {
+		return null; 
+	}
 }
