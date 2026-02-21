@@ -90,8 +90,8 @@ class EmployeeMongoRepositoryTest {
 	}
 	@Test
 	public void testFindByIdNotFound() {
-		assertThat(employeeRepository.findById("1"))
-			.isNull();
+		Employee found = employeeRepository.findById("1");
+	    assertThat(found).isNull();
 	}
 	private void addTestEmployeeToDatabase(String id, String name) {
 		employeeCollection.insertOne(
