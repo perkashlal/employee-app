@@ -88,6 +88,11 @@ class EmployeeMongoRepositoryTest {
 		assertThat(sunil).isNotEqualTo(differentIdSameName);
 		assertThat(sunil).isNotEqualTo(mayoor);
 	}
+	@Test
+	public void testFindByIdNotFound() {
+		assertThat(employeeRepository.findById("1"))
+			.isNull();
+	}
 	private void addTestEmployeeToDatabase(String id, String name) {
 		employeeCollection.insertOne(
 				new Document()
