@@ -21,4 +21,12 @@ class EmployeeMongoRepositoryTest {
 		List<Employee> employees = employeeRepository.findAll();
 		assertThat(employees).isEmpty();
 	}
+	@Test
+	void testFindAllWhenDatabaseIsNotEmpty() {
+		
+		Employee employee = new Employee("1", "pika");
+		List<Employee> employees = employeeRepository.findAll();
+		
+		assertThat(employees).containsExactly(employee);
+	}
 }
