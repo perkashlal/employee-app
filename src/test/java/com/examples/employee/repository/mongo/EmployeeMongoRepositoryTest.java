@@ -58,18 +58,36 @@ class EmployeeMongoRepositoryTest {
 	void testFindAllWhenDatabaseIsEmpty() {
 		assertThat(employeeRepository.findAll()).isEmpty();
 	}
-
 	@Test
 	void testFindAllWhenDatabaseIsNotEmpty() {
-		addTestEmployeeToDatabase("1", "test1");
-		addTestEmployeeToDatabase("2", "test2");
+		addTestEmployeeToDatabase("101", "Kanchan");
+		addTestEmployeeToDatabase("102", "Parkash");
 		
 		assertThat(employeeRepository.findAll())
 			.containsExactly(
-				new Employee("1", "test1"),
-				new Employee("2", "test2"));
+				new Employee("101", "Kanchan"),
+				new Employee("102", "Parkash"));
 	}
+	@Test
+	void testEmployeeMethodsForCoverage() {
+		Employee sunil = new Employee("1", "Sunil");
+		Employee sunilCopy = new Employee("1", "Sunil");
+		Employee mayoor = new Employee("2", "Mayoor");
 
+		assertThat(sunil.getId()).isEqualTo("1");
+		assertThat(sunil.getName()).isEqualTo("Sunil");
+	
+		assertThat(sunil.hashCode()).isEqualTo(sunilCopy.hashCode());
+		assertThat(sunil).isEqualTo(sunilCopy);
+		assertThat(sunil).isNotEqualTo(null);
+		assertThat(sunil).isNotEqualTo("Not an Employee");
+		
+		Employee sameIdDifferentName = new Employee("1", "Mayoor");
+		Employee differentIdSameName = new Employee("2", "Sunil");
+		assertThat(sunil).isNotEqualTo(sameIdDifferentName);
+		assertThat(sunil).isNotEqualTo(differentIdSameName);
+		assertThat(sunil).isNotEqualTo(mayoor);
+	}
 	private void addTestEmployeeToDatabase(String id, String name) {
 		employeeCollection.insertOne(
 				new Document()
