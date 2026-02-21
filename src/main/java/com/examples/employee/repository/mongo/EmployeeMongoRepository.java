@@ -28,6 +28,11 @@ public class EmployeeMongoRepository implements EmployeeRepository {
 			.collect(Collectors.toList());
 	}
 	public Employee findById(String id) {
-		return null; 
+		Document d = employeeCollection.find(com.mongodb.client.model.Filters.eq("id", id)).first();
+		if (d != null) {
+			return new Employee("" + d.get("id"), "" + d.get("name"));
+		}
+		return null;
+		 
 	}
 }
