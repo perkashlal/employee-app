@@ -118,6 +118,12 @@ class EmployeeMongoRepositoryTest {
 		assertThat(readAllEmployeesFromDatabase())
 			.containsExactly(arvind);
 	}
+	@Test
+	public void testDelete() {
+		addTestEmployeeToDatabase("1", "Kanchan");
+		employeeRepository.delete("1");
+		assertThat(readAllEmployeesFromDatabase()).isEmpty();
+	}
 
 	private void addTestEmployeeToDatabase(String id, String name) {
 		employeeCollection.insertOne(
