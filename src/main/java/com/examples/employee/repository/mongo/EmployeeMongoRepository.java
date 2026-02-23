@@ -43,4 +43,8 @@ public class EmployeeMongoRepository implements EmployeeRepository {
 				.append("id", employee.getId())
 				.append("name", employee.getName()));
 	}
+	@Override
+	public void delete(String id) {
+		employeeCollection.deleteOne(Filters.eq("id", id));
+	}
 }

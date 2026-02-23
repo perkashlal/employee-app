@@ -7,4 +7,5 @@ public interface EmployeeRepository {
 	public List<Employee> findAll();
 	Employee findById(String id);
 	void save(Employee employee);
+	void delete(String id);
 }
