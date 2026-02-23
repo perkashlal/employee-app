@@ -1,5 +1,7 @@
 package com.examples.employee.controller;
 
+import java.util.List;
+import com.examples.employee.model.Employee;
 import com.examples.employee.repository.EmployeeRepository;
 import com.examples.employee.view.EmployeeView;
 
@@ -14,6 +16,7 @@ public class EmployeeController {
 	}
 
 	public void allEmployees() {
-		employeeRepository.findAll();
+		List<Employee> employees = employeeRepository.findAll();
+		employeeView.showAllEmployees(employees);
 	}
 }
