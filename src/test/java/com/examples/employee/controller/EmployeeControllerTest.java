@@ -12,6 +12,8 @@ import org.mockito.MockitoAnnotations;
 import com.examples.employee.model.Employee;
 import com.examples.employee.repository.EmployeeRepository;
 import com.examples.employee.view.EmployeeView;
+import org.mockito.InOrder;
+import static org.mockito.Mockito.inOrder;
 
 class EmployeeControllerTest {
 
@@ -55,5 +57,18 @@ class EmployeeControllerTest {
 	    InOrder inOrder = inOrder(employeeRepository, employeeView);
 	    inOrder.verify(employeeRepository).save(employee);
 	    inOrder.verify(employeeView).employeeAdded(employee);
+	}
+	@Test
+	public void testNewEmployeeWhenEmployeeAlreadyExists() {
+	    Employee employeeToAdd = new Employee("1", "test");
+	    Employee existingEmployee = new Employee("1", "name");
+	    
+	    when(employeeRepository.findById("1")).thenReturn(existingEmployee);
+	    
+	    employeeController.newEmployee(employeeToAdd);
+	    
+	    verify(employeeView)
+	        .showError("Already existing employee with id 1", existingEmployee);
+	    verifyNoMoreInteractions(ignoreStubs(employeeRepository));
 	}
 }
