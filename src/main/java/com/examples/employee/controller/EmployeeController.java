@@ -21,9 +21,13 @@ public class EmployeeController {
 		
 	}
 	public void newEmployee(Employee employee) {
-		Employee existingEmployee = employeeRepository.findById(employee.getId());
-		if (existingEmployee == null) {
-			employeeRepository.save(employee);
-			employeeView.employeeAdded(employee);
-		}
-}}
+	    Employee existingEmployee = employeeRepository.findById(employee.getId());
+	    if (existingEmployee == null) {
+	        employeeRepository.save(employee);
+	        employeeView.employeeAdded(employee);
+	    } else {
+	        employeeView.showError("Already existing employee with id " + employee.getId(), 
+	            existingEmployee);
+	    }
+	}
+}
