@@ -18,5 +18,12 @@ public class EmployeeController {
 	public void allEmployees() {
 		List<Employee> employees = employeeRepository.findAll();
 		employeeView.showAllEmployees(employees);
+		
 	}
-}
+	public void newEmployee(Employee employee) {
+		Employee existingEmployee = employeeRepository.findById(employee.getId());
+		if (existingEmployee == null) {
+			employeeRepository.save(employee);
+			employeeView.employeeAdded(employee);
+		}
+}}
