@@ -1,18 +1,25 @@
 package com.examples.employee.repository.mongo;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import java.net.InetSocketAddress;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import org.bson.Document;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import com.mongodb.client.MongoClient;
+
 import com.examples.employee.model.Employee;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
@@ -41,7 +48,6 @@ class EmployeeMongoRepositoryTest {
 
 	@BeforeEach
 	void setup() {
-		// Use the modern MongoClients.create for JUnit 5
 		client = MongoClients.create("mongodb://" + serverAddress.getHostName() + ":" + serverAddress.getPort());
 		employeeRepository = new EmployeeMongoRepository(client, DB_NAME, COLLECTION_NAME);
 		MongoDatabase database = client.getDatabase(DB_NAME);
@@ -58,16 +64,18 @@ class EmployeeMongoRepositoryTest {
 	void testFindAllWhenDatabaseIsEmpty() {
 		assertThat(employeeRepository.findAll()).isEmpty();
 	}
+
 	@Test
 	void testFindAllWhenDatabaseIsNotEmpty() {
 		addTestEmployeeToDatabase("101", "Kanchan");
 		addTestEmployeeToDatabase("102", "Parkash");
-		
+
 		assertThat(employeeRepository.findAll())
 			.containsExactly(
 				new Employee("101", "Kanchan"),
 				new Employee("102", "Parkash"));
 	}
+
 	@Test
 	void testEmployeeMethodsForCoverage() {
 		Employee sunil = new Employee("1", "Sunil");
@@ -76,23 +84,25 @@ class EmployeeMongoRepositoryTest {
 
 		assertThat(sunil.getId()).isEqualTo("1");
 		assertThat(sunil.getName()).isEqualTo("Sunil");
-	
+
 		assertThat(sunil.hashCode()).isEqualTo(sunilCopy.hashCode());
 		assertThat(sunil).isEqualTo(sunilCopy);
 		assertThat(sunil).isNotEqualTo(null);
 		assertThat(sunil).isNotEqualTo("Not an Employee");
-		
+
 		Employee sameIdDifferentName = new Employee("1", "Mayoor");
 		Employee differentIdSameName = new Employee("2", "Sunil");
 		assertThat(sunil).isNotEqualTo(sameIdDifferentName);
 		assertThat(sunil).isNotEqualTo(differentIdSameName);
 		assertThat(sunil).isNotEqualTo(mayoor);
 	}
+
 	@Test
 	public void testFindByIdNotFound() {
 		Employee found = employeeRepository.findById("1");
-	    assertThat(found).isNull();
+		assertThat(found).isNull();
 	}
+
 	@Test
 	public void testFindByIdFound() {
 		addTestEmployeeToDatabase("1", "Mayoor");
@@ -100,6 +110,7 @@ class EmployeeMongoRepositoryTest {
 		Employee found = employeeRepository.findById("2");
 		assertThat(found).isEqualTo(new Employee("2", "Sunil"));
 	}
+
 	@Test
 	public void testSave() {
 		Employee arvind = new Employee("3", "Arvind");
@@ -107,10 +118,18 @@ class EmployeeMongoRepositoryTest {
 		assertThat(readAllEmployeesFromDatabase())
 			.containsExactly(arvind);
 	}
+
 	private void addTestEmployeeToDatabase(String id, String name) {
 		employeeCollection.insertOne(
 				new Document()
 					.append("id", id)
 					.append("name", name));
+	}
+
+	private List<Employee> readAllEmployeesFromDatabase() {
+		return StreamSupport.
+			stream(employeeCollection.find().spliterator(), false)
+				.map(d -> new Employee("" + d.get("id"), "" + d.get("name")))
+				.collect(Collectors.toList());
 	}
 }

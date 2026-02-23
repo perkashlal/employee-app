@@ -34,4 +34,11 @@ public class EmployeeMongoRepository implements EmployeeRepository {
 				: null;
 		
 	}
+	@Override
+	public void save(Employee employee) {
+		employeeCollection.insertOne(
+			new Document()
+				.append("id", employee.getId())
+				.append("name", employee.getName()));
+	}
 }
