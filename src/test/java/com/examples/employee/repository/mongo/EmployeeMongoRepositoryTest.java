@@ -100,6 +100,13 @@ class EmployeeMongoRepositoryTest {
 		Employee found = employeeRepository.findById("2");
 		assertThat(found).isEqualTo(new Employee("2", "Sunil"));
 	}
+	@Test
+	public void testSave() {
+		Employee arvind = new Employee("3", "Arvind");
+		employeeRepository.save(arvind);
+		assertThat(readAllEmployeesFromDatabase())
+			.containsExactly(arvind);
+	}
 	private void addTestEmployeeToDatabase(String id, String name) {
 		employeeCollection.insertOne(
 				new Document()
