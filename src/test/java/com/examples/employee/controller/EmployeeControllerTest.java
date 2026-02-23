@@ -45,4 +45,15 @@ class EmployeeControllerTest {
 		
 		verify(employeeView).showAllEmployees(employees);
 	}
+	@Test
+	void testNewEmployeeWhenEmployeeDoesNotAlreadyExist() {
+	    Employee employee = new Employee("1", "test");
+	    when(employeeRepository.findById("1")).thenReturn(null);
+	    
+	    employeeController.newEmployee(employee);
+	    
+	    InOrder inOrder = inOrder(employeeRepository, employeeView);
+	    inOrder.verify(employeeRepository).save(employee);
+	    inOrder.verify(employeeView).employeeAdded(employee);
+	}
 }
