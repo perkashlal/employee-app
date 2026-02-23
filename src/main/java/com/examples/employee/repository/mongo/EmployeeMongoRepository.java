@@ -24,16 +24,17 @@ public class EmployeeMongoRepository implements EmployeeRepository {
 	public List<Employee> findAll() {
 		return StreamSupport.
 			stream(employeeCollection.find().spliterator(), false)
-			.map(d -> new Employee(d.getString("id"), d.getString("name")))
+			.map(this::fromDocumentToEmployee)
 			.collect(Collectors.toList());
 	}
 
 	@Override
 	public Employee findById(String id) {
 		Document d = employeeCollection.find(Filters.eq("id", id)).first();
-		return (d != null) 
-				? new Employee(d.getString("id"), d.getString("name")) 
-				: null;
+		if (d != null) {
+			return fromDocumentToEmployee(d);
+		}
+		return null;
 	}
 
 	@Override
@@ -43,8 +44,13 @@ public class EmployeeMongoRepository implements EmployeeRepository {
 				.append("id", employee.getId())
 				.append("name", employee.getName()));
 	}
+
 	@Override
 	public void delete(String id) {
 		employeeCollection.deleteOne(Filters.eq("id", id));
+	}
+
+	private Employee fromDocumentToEmployee(Document d) {
+		return new Employee(d.getString("id"), d.getString("name"));
 	}
 }
