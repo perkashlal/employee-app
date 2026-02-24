@@ -1,0 +1,61 @@
+package com.examples.employee.view.swing;
+
+import org.assertj.swing.core.matcher.JButtonMatcher;
+import org.assertj.swing.core.matcher.JLabelMatcher;
+import org.assertj.swing.edt.GuiActionRunner;
+import org.assertj.swing.fixture.FrameFixture;
+import org.assertj.swing.junit.runner.GUITestRunner;
+import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import com.examples.employee.controller.EmployeeController;
+
+@RunWith(GUITestRunner.class)
+public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
+
+    private FrameFixture window;
+    private EmployeeSwingView employeeSwingView;
+
+    @Mock
+    private EmployeeController employeeController;
+
+    private AutoCloseable closeable;
+
+    @Override
+    protected void onSetUp() {
+        closeable = MockitoAnnotations.openMocks(this);
+        GuiActionRunner.execute(() -> {
+            employeeSwingView = new EmployeeSwingView();
+            employeeSwingView.setEmployeeController(employeeController);
+            return employeeSwingView;
+        });
+        window = new FrameFixture(robot(), employeeSwingView);
+        window.show(); 
+    }
+
+    @Override
+    protected void onTearDown() throws Exception {
+        closeable.close();
+    }
+
+    @Test
+    public void testControlsInitialStates() {
+        window.label(JLabelMatcher.withText("id"));
+        window.textBox("idTextBox").requireEnabled();
+        window.label(JLabelMatcher.withText("name"));
+        window.textBox("nameTextBox").requireEnabled();
+        window.button(JButtonMatcher.withText("Add")).requireDisabled();
+        window.list("employeeList");
+        window.button(JButtonMatcher.withText("Delete Selected")).requireDisabled();
+        
+        window.label("errorMessageLabel").requireText(""); 
+    }
+    @Test
+    public void testWhenIdAndNameAreNonEmptyThenAddButtonShouldBeEnabled() {
+        window.textBox("idTextBox").enterText("1");
+        window.textBox("nameTextBox").enterText("test");
+        window.button(JButtonMatcher.withText("Add")).requireEnabled();
+    }
+}
