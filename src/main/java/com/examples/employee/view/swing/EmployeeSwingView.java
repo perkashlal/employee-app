@@ -76,6 +76,8 @@ public class EmployeeSwingView extends JFrame {
 
 	public void setEmployeeController(EmployeeController employeeController) {
 	}
+	public void showError(String message, Employee employee) {
+	}
 
 	public DefaultListModel<String> getListEmployeesModel() {
 		return listEmployeesModel;

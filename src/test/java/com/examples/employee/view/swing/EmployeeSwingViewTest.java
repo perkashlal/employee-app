@@ -106,4 +106,13 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
 		assertThat(listContents)
 			.containsExactly("1 - test1", "2 - test2");
 	}
+    @Test
+	public void testShowErrorShouldShowTheMessageInTheErrorLabel() {
+		Employee employee = new Employee("1", "test1");
+		GuiActionRunner.execute(
+			() -> employeeSwingView.showError("error message", employee)
+		);
+		window.label("errorMessageLabel")
+			.requireText("error message: 1 - test1");
+	}
 }
