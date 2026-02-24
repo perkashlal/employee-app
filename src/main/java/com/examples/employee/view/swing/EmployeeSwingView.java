@@ -42,6 +42,9 @@ public class EmployeeSwingView extends JFrame {
 		employeeList = new JList<>(listEmployeesModel);
 		employeeList.setName("employeeList");
 		add(employeeList);
+		employeeList.addListSelectionListener(e -> {
+			btnDelete.setEnabled(employeeList.getSelectedIndex() != -1);
+		});
 
 		btnDelete = new JButton("Delete Selected");
 		btnDelete.setEnabled(false);
@@ -70,5 +73,6 @@ public class EmployeeSwingView extends JFrame {
 
 	public DefaultListModel<String> getListEmployeesModel() {
 		return listEmployeesModel;
+		
 	}
 }
