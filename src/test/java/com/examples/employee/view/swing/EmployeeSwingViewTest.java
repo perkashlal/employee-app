@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.examples.employee.controller.EmployeeController;
 import org.assertj.swing.fixture.JTextComponentFixture;
+import org.assertj.swing.fixture.JButtonFixture;
+
 
 @RunWith(GUITestRunner.class)
 public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
@@ -74,5 +76,16 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
 		idTextBox.enterText(" ");
 		nameTextBox.enterText("test");
 		window.button(JButtonMatcher.withText("Add")).requireDisabled();
+	}
+    @Test
+	public void testDeleteButtonShouldBeEnabledOnlyWhenAnEmployeeIsSelected() {
+		GuiActionRunner.execute(() -> 
+			employeeSwingView.getListEmployeesModel().addElement("1 - John Doe")
+		);
+		window.list("employeeList").selectItem(0);
+		JButtonFixture deleteButton = window.button(JButtonMatcher.withText("Delete Selected"));
+		deleteButton.requireEnabled();
+		window.list("employeeList").clearSelection();
+		deleteButton.requireDisabled();
 	}
 }
