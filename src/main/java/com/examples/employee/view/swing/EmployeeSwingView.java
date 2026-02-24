@@ -23,6 +23,7 @@ public class EmployeeSwingView extends JFrame {
 	private JButton btnDelete;
 	private DefaultListModel<String> listEmployeesModel;
 	private JLabel errorMessageLabel;
+	
 
 	public EmployeeSwingView() {
 		setLayout(new FlowLayout());
@@ -79,6 +80,9 @@ public class EmployeeSwingView extends JFrame {
 
 	public void showError(String message, Employee employee) {
 		errorMessageLabel.setText(message + ": " + employee.getId() + " - " + employee.getName());
+	}
+
+	public void showErrorEmployeeNotFound(String message, Employee employee) {
 	}
 
 	public void setEmployeeController(EmployeeController employeeController) {

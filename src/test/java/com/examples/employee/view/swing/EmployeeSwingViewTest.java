@@ -14,8 +14,13 @@ import com.examples.employee.controller.EmployeeController;
 import org.assertj.swing.fixture.JTextComponentFixture;
 import org.assertj.swing.fixture.JButtonFixture;
 import java.util.List;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
+
 import com.examples.employee.model.Employee;
 import static org.assertj.core.api.Assertions.assertThat;
+
 
 
 
@@ -24,6 +29,8 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
 
     private FrameFixture window;
     private EmployeeSwingView employeeSwingView;
+    private DefaultListModel<String> listEmployeesModel;
+	private JLabel errorMessageLabel;
 
     @Mock
     private EmployeeController employeeController;
@@ -31,16 +38,17 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
     private AutoCloseable closeable;
 
     @Override
-    protected void onSetUp() {
-        closeable = MockitoAnnotations.openMocks(this);
-        GuiActionRunner.execute(() -> {
-            employeeSwingView = new EmployeeSwingView();
-            employeeSwingView.setEmployeeController(employeeController);
-            return employeeSwingView;
-        });
-        window = new FrameFixture(robot(), employeeSwingView);
-        window.show(); 
-    }
+	protected void onSetUp() {
+		GuiActionRunner.execute(() -> {
+			employeeSwingView = new EmployeeSwingView();
+			
+			listEmployeesModel = employeeSwingView.getListEmployeesModel(); 
+			return employeeSwingView;
+		});
+		window = new FrameFixture(robot(), employeeSwingView);
+		window.show();
+	} 
+    
 
     @Override
     protected void onTearDown() throws Exception {
@@ -114,5 +122,25 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
 		);
 		window.label("errorMessageLabel")
 			.requireText("error message: 1 - test1");
+	}
+    @Test
+	public void testShowErrorEmployeeNotFound() {
+		Employee employee1 = new Employee("1", "test1");
+		Employee employee2 = new Employee("2", "test2");
+		
+		GuiActionRunner.execute(() -> {
+			listEmployeesModel.addElement("1 - test1");
+			listEmployeesModel.addElement("2 - test2");
+		});
+
+		GuiActionRunner.execute(
+			() -> employeeSwingView.showErrorEmployeeNotFound("error message", employee1)
+		);
+
+		window.label("errorMessageLabel")
+			.requireText("error message: 1 - test1");
+		
+		assertThat(window.list("employeeList").contents())
+			.containsExactly("2 - test2");
 	}
 }
