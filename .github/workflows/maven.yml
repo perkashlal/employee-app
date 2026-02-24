@@ -1,10 +1,8 @@
-name: Java CI with Maven
+name: Java CI with Maven in Linux
 
 on:
   push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
@@ -12,14 +10,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-package: jdk
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-
-    - name: Build with Maven and Pitest
-      run: mvn -B clean verify pitest:mutationCoverage
+    - name: Build with Maven
+      # This runs the virtual display and adds a retry for downloads
+      run: xvfb-run mvn verify -Pjacoco -Dmaven.wagon.http.retryHandler.count=3
