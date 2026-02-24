@@ -150,5 +150,17 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
 		assertThat(window.list("employeeList").contents())
 			.containsExactly("2 - test2");
 	}
+    @Test
+    public void testEmployeeAddedShouldAddTheEmployeeToTheListAndResetTheErrorLabel() {
+        Employee employee = new Employee("1", "test1");
+        GuiActionRunner.execute(() -> {
+            // Pre-set an error to make sure it gets cleared
+            employeeSwingView.showError("any error", new Employee("2", "test2"));
+            employeeSwingView.employeeAdded(employee);
+        });
+        String[] listContents = window.list("employeeList").contents();
+        assertThat(listContents).containsExactly("1 - test1");
+        window.label("errorMessageLabel").requireText("");
+    }
     
 }

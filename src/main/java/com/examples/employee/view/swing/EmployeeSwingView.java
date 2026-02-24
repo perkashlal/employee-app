@@ -93,4 +93,7 @@ public class EmployeeSwingView extends JFrame {
 	public DefaultListModel<String> getListEmployeesModel() {
 		return listEmployeesModel;
 	}
+	public void employeeAdded(Employee employee) {
+	    
+	}
 }
