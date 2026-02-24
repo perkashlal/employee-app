@@ -10,8 +10,10 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTextField;
 import com.examples.employee.controller.EmployeeController;
-
+import java.util.List;
+import com.examples.employee.model.Employee;
 public class EmployeeSwingView extends JFrame {
+	
 
 	private static final long serialVersionUID = 1L;
 	private JTextField idTextBox;
@@ -67,6 +69,9 @@ public class EmployeeSwingView extends JFrame {
 		idTextBox.addKeyListener(btnAddEnabler);
 		nameTextBox.addKeyListener(btnAddEnabler);
 	}
+	public void showAllEmployees(List<Employee> employees) {
+		// Minimal implementation: do nothing for now to ensure failure
+	}
 
 	public void setEmployeeController(EmployeeController employeeController) {
 	}
@@ -75,4 +80,5 @@ public class EmployeeSwingView extends JFrame {
 		return listEmployeesModel;
 		
 	}
+	
 }

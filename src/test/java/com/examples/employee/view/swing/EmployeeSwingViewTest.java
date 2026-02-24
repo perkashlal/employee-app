@@ -13,6 +13,10 @@ import org.mockito.MockitoAnnotations;
 import com.examples.employee.controller.EmployeeController;
 import org.assertj.swing.fixture.JTextComponentFixture;
 import org.assertj.swing.fixture.JButtonFixture;
+import java.util.List;
+import com.examples.employee.model.Employee;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 
 @RunWith(GUITestRunner.class)
@@ -87,5 +91,19 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
 		deleteButton.requireEnabled();
 		window.list("employeeList").clearSelection();
 		deleteButton.requireDisabled();
+	}
+    @Test
+	public void testsShowAllEmployeesShouldAddEmployeeDescriptionsToTheList() {
+		Employee employee1 = new Employee("1", "test1");
+		Employee employee2 = new Employee("2", "test2");
+		
+		GuiActionRunner.execute(
+			() -> employeeSwingView.showAllEmployees(
+					java.util.Arrays.asList(employee1, employee2))
+		);
+		
+		String[] listContents = window.list("employeeList").contents();
+		assertThat(listContents)
+			.containsExactly("1 - test1", "2 - test2");
 	}
 }
