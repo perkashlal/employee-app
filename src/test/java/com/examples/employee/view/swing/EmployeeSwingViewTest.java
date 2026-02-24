@@ -14,7 +14,7 @@ import com.examples.employee.controller.EmployeeController;
 import org.assertj.swing.fixture.JTextComponentFixture;
 import org.assertj.swing.fixture.JButtonFixture;
 import java.util.List;
-
+import static org.mockito.Mockito.verify;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 
@@ -177,5 +177,13 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
         String[] listContents = window.list("employeeList").contents();
         assertThat(listContents).containsExactly("2 - test2");
         window.label("errorMessageLabel").requireText("");
+    }
+    @Test
+    public void testAddButtonShouldDelegateToEmployeeControllerNewEmployee() {
+        window.textBox("idTextBox").enterText("1");
+        window.textBox("nameTextBox").enterText("test");
+        window.button(JButtonMatcher.withText("Add")).click();
+        
+        verify(employeeController).newEmployee(new Employee("1", "test"));
     }
 }
