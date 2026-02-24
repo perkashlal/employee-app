@@ -51,8 +51,15 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
     
 
     @Override
-    protected void onTearDown() throws Exception {
-        closeable.close();
+	protected void onTearDown() {
+		if (closeable != null) { 
+			try {
+				closeable.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	
     }
 
     @Test
@@ -143,4 +150,5 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
 		assertThat(window.list("employeeList").contents())
 			.containsExactly("2 - test2");
 	}
+    
 }

@@ -83,6 +83,9 @@ public class EmployeeSwingView extends JFrame {
 	}
 
 	public void showErrorEmployeeNotFound(String message, Employee employee) {
+		errorMessageLabel.setText(message + ": " + employee.getId() + " - " + employee.getName());
+		listEmployeesModel.removeElement(employee.getId() + " - " + employee.getName());
+	
 	}
 
 	public void setEmployeeController(EmployeeController employeeController) {
