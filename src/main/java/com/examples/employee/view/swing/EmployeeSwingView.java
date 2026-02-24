@@ -94,6 +94,7 @@ public class EmployeeSwingView extends JFrame {
 		return listEmployeesModel;
 	}
 	public void employeeAdded(Employee employee) {
-	    
+	    listEmployeesModel.addElement(employee.getId() + " - " + employee.getName());
+	    errorMessageLabel.setText("");
 	}
 }
