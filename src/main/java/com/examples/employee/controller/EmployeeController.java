@@ -32,9 +32,13 @@ public class EmployeeController {
 	    
 	}
 	public void deleteEmployee(Employee employee) {
-	    if (employeeRepository.findById(employee.getId()) != null) {
+	    Employee existingEmployee = employeeRepository.findById(employee.getId());
+	    if (existingEmployee != null) {
 	        employeeRepository.delete(employee.getId());
 	        employeeView.employeeRemoved(employee);
+	    } else {
+	        employeeView.showError("No existing employee with id " + employee.getId(), employee);
 	    }
+	
 	}
 }
