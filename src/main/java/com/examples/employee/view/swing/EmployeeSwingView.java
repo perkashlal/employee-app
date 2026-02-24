@@ -13,11 +13,7 @@ import javax.swing.JTextField;
 import com.examples.employee.controller.EmployeeController;
 import com.examples.employee.model.Employee;
 
-
 public class EmployeeSwingView extends JFrame {
-	private void resetErrorLabel() {
-	    errorMessageLabel.setText("");
-	}
 
 	private static final long serialVersionUID = 1L;
 	private JTextField idTextBox;
@@ -27,7 +23,7 @@ public class EmployeeSwingView extends JFrame {
 	private JButton btnDelete;
 	private DefaultListModel<String> listEmployeesModel;
 	private JLabel errorMessageLabel;
-	
+	private EmployeeController employeeController;
 
 	public EmployeeSwingView() {
 		setLayout(new FlowLayout());
@@ -45,6 +41,10 @@ public class EmployeeSwingView extends JFrame {
 		btnAdd = new JButton("Add");
 		btnAdd.setEnabled(false);
 		add(btnAdd);
+
+		btnAdd.addActionListener(e -> 
+			employeeController.newEmployee(new Employee(idTextBox.getText(), nameTextBox.getText()))
+		);
 
 		listEmployeesModel = new DefaultListModel<>();
 		employeeList = new JList<>(listEmployeesModel);
@@ -92,17 +92,24 @@ public class EmployeeSwingView extends JFrame {
 	}
 
 	public void setEmployeeController(EmployeeController employeeController) {
+		this.employeeController = employeeController;
 	}
 
 	public DefaultListModel<String> getListEmployeesModel() {
 		return listEmployeesModel;
 	}
+
 	public void employeeAdded(Employee employee) {
-	    listEmployeesModel.addElement(employee.getId() + " - " + employee.getName());
-	    errorMessageLabel.setText("");
+		listEmployeesModel.addElement(employee.getId() + " - " + employee.getName());
+		resetErrorLabel();
 	}
+
 	public void employeeRemoved(Employee employee) {
-	    listEmployeesModel.removeElement(employee.getId() + " - " + employee.getName());
-	    resetErrorLabel();
+		listEmployeesModel.removeElement(employee.getId() + " - " + employee.getName());
+		resetErrorLabel();
+	}
+
+	private void resetErrorLabel() {
+		errorMessageLabel.setText("");
 	}
 }
