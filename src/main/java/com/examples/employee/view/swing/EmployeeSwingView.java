@@ -97,4 +97,7 @@ public class EmployeeSwingView extends JFrame {
 	    listEmployeesModel.addElement(employee.getId() + " - " + employee.getName());
 	    errorMessageLabel.setText("");
 	}
+	public void employeeRemoved(Employee employee) {
+	   
+	}
 }

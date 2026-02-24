@@ -162,5 +162,21 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
         assertThat(listContents).containsExactly("1 - test1");
         window.label("errorMessageLabel").requireText("");
     }
-    
+    @Test
+    public void testEmployeeRemovedShouldRemoveTheEmployeeFromTheListAndResetTheErrorLabel() {
+        Employee employee1 = new Employee("1", "test1");
+        Employee employee2 = new Employee("2", "test2");
+        GuiActionRunner.execute(() -> {
+            listEmployeesModel.addElement("1 - test1");
+            listEmployeesModel.addElement("2 - test2");
+        });
+        
+        GuiActionRunner.execute(
+            () -> employeeSwingView.employeeRemoved(new Employee("1", "test1"))
+        );
+        
+        String[] listContents = window.list("employeeList").contents();
+        assertThat(listContents).containsExactly("2 - test2");
+        window.label("errorMessageLabel").requireText("");
+    }
 }
