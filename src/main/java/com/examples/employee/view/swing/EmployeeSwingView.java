@@ -55,8 +55,8 @@ public class EmployeeSwingView extends JFrame {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				btnAdd.setEnabled(
-					!idTextBox.getText().isEmpty() &&
-					!nameTextBox.getText().isEmpty()
+					!idTextBox.getText().trim().isEmpty() &&
+					!nameTextBox.getText().trim().isEmpty()
 				);
 			}
 		};
