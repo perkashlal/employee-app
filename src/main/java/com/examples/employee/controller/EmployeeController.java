@@ -32,6 +32,9 @@ public class EmployeeController {
 	    
 	}
 	public void deleteEmployee(Employee employee) {
-	   
+	    if (employeeRepository.findById(employee.getId()) != null) {
+	        employeeRepository.delete(employee.getId());
+	        employeeView.employeeRemoved(employee);
+	    }
 	}
 }
