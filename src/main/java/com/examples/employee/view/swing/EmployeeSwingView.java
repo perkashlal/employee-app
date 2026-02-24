@@ -13,7 +13,11 @@ import javax.swing.JTextField;
 import com.examples.employee.controller.EmployeeController;
 import com.examples.employee.model.Employee;
 
+
 public class EmployeeSwingView extends JFrame {
+	private void resetErrorLabel() {
+	    errorMessageLabel.setText("");
+	}
 
 	private static final long serialVersionUID = 1L;
 	private JTextField idTextBox;
@@ -98,6 +102,7 @@ public class EmployeeSwingView extends JFrame {
 	    errorMessageLabel.setText("");
 	}
 	public void employeeRemoved(Employee employee) {
-	   
+	    listEmployeesModel.removeElement(employee.getId() + " - " + employee.getName());
+	    resetErrorLabel();
 	}
 }
