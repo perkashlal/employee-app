@@ -189,4 +189,18 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
         
         verify(employeeController).newEmployee(new Employee("1", "test"));
     }
+    @Test
+    public void testDeleteButtonShouldDelegateToEmployeeControllerDeleteEmployee() {
+    	Employee employee1 = new Employee("1", "test1");
+    	Employee employee2 = new Employee("2", "test2");
+    	GuiActionRunner.execute(() -> {
+    		listEmployeesModel.addElement(employee1.getId() + " - " + employee1.getName());
+    		listEmployeesModel.addElement(employee2.getId() + " - " + employee2.getName());
+    	});
+    	
+    	window.list("employeeList").selectItem(1); // Selects '2 - test2'
+    	window.button(JButtonMatcher.withText("Delete Selected")).click();
+    	
+    	verify(employeeController).deleteEmployee(employee2);
+    }
 }

@@ -59,6 +59,14 @@ public class EmployeeSwingView extends JFrame {
 		btnDelete.setEnabled(false);
 		add(btnDelete);
 
+		btnDelete.addActionListener(e -> {
+			String selectedValue = employeeList.getSelectedValue();
+			if (selectedValue != null) {
+				String[] parts = selectedValue.split(" - ");
+				employeeController.deleteEmployee(new Employee(parts[0], parts[1]));
+			}
+		});
+
 		errorMessageLabel = new JLabel("");
 		errorMessageLabel.setName("errorMessageLabel");
 		add(errorMessageLabel);
