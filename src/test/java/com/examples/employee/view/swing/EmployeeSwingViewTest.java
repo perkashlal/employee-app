@@ -38,16 +38,19 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
     private AutoCloseable closeable;
 
     @Override
-	protected void onSetUp() {
-		GuiActionRunner.execute(() -> {
-			employeeSwingView = new EmployeeSwingView();
-			
-			listEmployeesModel = employeeSwingView.getListEmployeesModel(); 
-			return employeeSwingView;
-		});
-		window = new FrameFixture(robot(), employeeSwingView);
-		window.show();
-	} 
+    protected void onSetUp() {
+        closeable = MockitoAnnotations.openMocks(this); 
+        
+        GuiActionRunner.execute(() -> {
+            employeeSwingView = new EmployeeSwingView();
+            employeeSwingView.setEmployeeController(employeeController); 
+            
+            listEmployeesModel = employeeSwingView.getListEmployeesModel(); 
+            return employeeSwingView;
+        });
+        window = new FrameFixture(robot(), employeeSwingView);
+        window.show();
+    }
     
 
     @Override
