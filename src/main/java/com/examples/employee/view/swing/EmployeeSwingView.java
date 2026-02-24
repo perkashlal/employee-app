@@ -17,6 +17,9 @@ public class EmployeeSwingView extends JFrame {
 	private JTextField idTextBox;
 	private JTextField nameTextBox;
 	private JButton btnAdd;
+	private JList<String> employeeList;
+	private JButton btnDelete;
+	private DefaultListModel<String> listEmployeesModel;
 
 	public EmployeeSwingView() {
 		setLayout(new FlowLayout());
@@ -35,11 +38,12 @@ public class EmployeeSwingView extends JFrame {
 		btnAdd.setEnabled(false);
 		add(btnAdd);
 
-		JList<String> employeeList = new JList<>(new DefaultListModel<>());
+		listEmployeesModel = new DefaultListModel<>();
+		employeeList = new JList<>(listEmployeesModel);
 		employeeList.setName("employeeList");
 		add(employeeList);
 
-		JButton btnDelete = new JButton("Delete Selected");
+		btnDelete = new JButton("Delete Selected");
 		btnDelete.setEnabled(false);
 		add(btnDelete);
 
@@ -51,8 +55,8 @@ public class EmployeeSwingView extends JFrame {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				btnAdd.setEnabled(
-					!idTextBox.getText().trim().isEmpty() &&
-					!nameTextBox.getText().trim().isEmpty()
+					!idTextBox.getText().isEmpty() &&
+					!nameTextBox.getText().isEmpty()
 				);
 			}
 		};
@@ -62,5 +66,9 @@ public class EmployeeSwingView extends JFrame {
 	}
 
 	public void setEmployeeController(EmployeeController employeeController) {
+	}
+
+	public DefaultListModel<String> getListEmployeesModel() {
+		return listEmployeesModel;
 	}
 }

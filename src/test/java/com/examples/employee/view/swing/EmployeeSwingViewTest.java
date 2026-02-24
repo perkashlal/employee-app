@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.examples.employee.controller.EmployeeController;
+import org.assertj.swing.fixture.JTextComponentFixture;
 
 @RunWith(GUITestRunner.class)
 public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
@@ -58,4 +59,20 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
         window.textBox("nameTextBox").enterText("test");
         window.button(JButtonMatcher.withText("Add")).requireEnabled();
     }
+    @Test
+	public void testWhenEitherIdOrNameAreBlankThenAddButtonShouldBeDisabled() {
+		JTextComponentFixture idTextBox = window.textBox("idTextBox");
+		JTextComponentFixture nameTextBox = window.textBox("nameTextBox");
+
+		idTextBox.enterText("1");
+		nameTextBox.enterText(" ");
+		window.button(JButtonMatcher.withText("Add")).requireDisabled();
+
+		idTextBox.setText("");
+		nameTextBox.setText("");
+
+		idTextBox.enterText(" ");
+		nameTextBox.enterText("test");
+		window.button(JButtonMatcher.withText("Add")).requireDisabled();
+	}
 }
