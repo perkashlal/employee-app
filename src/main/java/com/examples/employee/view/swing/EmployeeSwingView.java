@@ -70,7 +70,8 @@ public class EmployeeSwingView extends JFrame {
 		nameTextBox.addKeyListener(btnAddEnabler);
 	}
 	public void showAllEmployees(List<Employee> employees) {
-		// Minimal implementation: do nothing for now to ensure failure
+		listEmployeesModel.clear();
+		employees.stream().forEach(employee -> listEmployeesModel.addElement(employee.getId() + " - " + employee.getName()));
 	}
 
 	public void setEmployeeController(EmployeeController employeeController) {
