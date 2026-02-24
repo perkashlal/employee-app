@@ -71,4 +71,15 @@ class EmployeeControllerTest {
 	        .showError("Already existing employee with id 1", existingEmployee);
 	    verifyNoMoreInteractions(ignoreStubs(employeeRepository));
 	}
+	@Test
+	void testDeleteEmployeeWhenEmployeeExists() {
+	    Employee employeeToDelete = new Employee("1", "test");
+	    when(employeeRepository.findById("1")).thenReturn(employeeToDelete);
+	    
+	    employeeController.deleteEmployee(employeeToDelete);
+	    
+	    InOrder inOrder = inOrder(employeeRepository, employeeView);
+	    inOrder.verify(employeeRepository).delete("1");
+	    inOrder.verify(employeeView).employeeRemoved(employeeToDelete);
+	}
 }

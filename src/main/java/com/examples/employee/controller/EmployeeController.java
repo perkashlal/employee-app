@@ -29,5 +29,9 @@ public class EmployeeController {
 	        employeeView.showError("Already existing employee with id " + employee.getId(), 
 	            existingEmployee);
 	    }
+	    
+	}
+	public void deleteEmployee(Employee employee) {
+	   
 	}
 }
