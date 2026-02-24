@@ -3,6 +3,7 @@ package com.examples.employee.view.swing;
 import java.awt.FlowLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -10,10 +11,9 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTextField;
 import com.examples.employee.controller.EmployeeController;
-import java.util.List;
 import com.examples.employee.model.Employee;
+
 public class EmployeeSwingView extends JFrame {
-	
 
 	private static final long serialVersionUID = 1L;
 	private JTextField idTextBox;
@@ -22,6 +22,7 @@ public class EmployeeSwingView extends JFrame {
 	private JList<String> employeeList;
 	private JButton btnDelete;
 	private DefaultListModel<String> listEmployeesModel;
+	private JLabel errorMessageLabel;
 
 	public EmployeeSwingView() {
 		setLayout(new FlowLayout());
@@ -44,6 +45,7 @@ public class EmployeeSwingView extends JFrame {
 		employeeList = new JList<>(listEmployeesModel);
 		employeeList.setName("employeeList");
 		add(employeeList);
+
 		employeeList.addListSelectionListener(e -> {
 			btnDelete.setEnabled(employeeList.getSelectedIndex() != -1);
 		});
@@ -52,7 +54,7 @@ public class EmployeeSwingView extends JFrame {
 		btnDelete.setEnabled(false);
 		add(btnDelete);
 
-		JLabel errorMessageLabel = new JLabel("");
+		errorMessageLabel = new JLabel("");
 		errorMessageLabel.setName("errorMessageLabel");
 		add(errorMessageLabel);
 
@@ -69,19 +71,20 @@ public class EmployeeSwingView extends JFrame {
 		idTextBox.addKeyListener(btnAddEnabler);
 		nameTextBox.addKeyListener(btnAddEnabler);
 	}
+
 	public void showAllEmployees(List<Employee> employees) {
 		listEmployeesModel.clear();
 		employees.stream().forEach(employee -> listEmployeesModel.addElement(employee.getId() + " - " + employee.getName()));
 	}
 
-	public void setEmployeeController(EmployeeController employeeController) {
-	}
 	public void showError(String message, Employee employee) {
+		errorMessageLabel.setText(message + ": " + employee.getId() + " - " + employee.getName());
+	}
+
+	public void setEmployeeController(EmployeeController employeeController) {
 	}
 
 	public DefaultListModel<String> getListEmployeesModel() {
 		return listEmployeesModel;
-		
 	}
-	
 }
