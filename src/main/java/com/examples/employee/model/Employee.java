@@ -3,9 +3,11 @@ package com.examples.employee.model;
 import java.util.Objects;
 
 public class Employee {
-
 	private String id;
 	private String name;
+
+	public Employee() {
+	}
 
 	public Employee(String id, String name) {
 		this.id = id;
@@ -16,8 +18,16 @@ public class Employee {
 		return id;
 	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override
@@ -27,11 +37,21 @@ public class Employee {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof Employee) {
-			Employee other = (Employee) obj;
-			return Objects.equals(id, other.id) && 
-				   Objects.equals(name, other.name);
+		if (this == obj) {
+			return true;
 		}
-		return false;
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Employee other = (Employee) obj;
+		return Objects.equals(id, other.id) && Objects.equals(name, other.name);
+	}
+
+	@Override
+	public String toString() {
+		return "Employee [id=" + id + ", name=" + name + "]";
 	}
 }
