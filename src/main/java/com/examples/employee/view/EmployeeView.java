@@ -11,4 +11,5 @@ public interface EmployeeView {
     void employeeRemoved(Employee employee);
 
     void showError(String message, Employee employee);
+    void showErrorEmployeeNotFound(String message, Employee employee);
 }
