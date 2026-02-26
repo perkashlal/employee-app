@@ -1,31 +1,26 @@
 package com.examples.employee.view.swing;
 
-import java.awt.FlowLayout;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.*;
 import java.util.List;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JTextField;
+import javax.swing.*;
 import com.examples.employee.controller.EmployeeController;
 import com.examples.employee.model.Employee;
+import com.examples.employee.view.EmployeeView;
 
-public class EmployeeSwingView extends JFrame {
+public class EmployeeSwingView extends JFrame implements EmployeeView {
 
 	private static final long serialVersionUID = 1L;
 	private JTextField idTextBox;
 	private JTextField nameTextBox;
 	private JButton btnAdd;
-	private JList<String> employeeList;
+	private JList<Employee> employeeList;
+	private DefaultListModel<Employee> listEmployeesModel;
 	private JButton btnDelete;
-	private DefaultListModel<String> listEmployeesModel;
 	private JLabel errorMessageLabel;
-	private EmployeeController employeeController;
+	private transient EmployeeController employeeController;
 
 	public EmployeeSwingView() {
+		setTitle("Employee View");
 		setLayout(new FlowLayout());
 
 		add(new JLabel("id"));
@@ -39,85 +34,83 @@ public class EmployeeSwingView extends JFrame {
 		add(nameTextBox);
 
 		btnAdd = new JButton("Add");
+		btnAdd.setName("btnAdd");
 		btnAdd.setEnabled(false);
 		add(btnAdd);
-
-		btnAdd.addActionListener(e -> 
-			employeeController.newEmployee(new Employee(idTextBox.getText(), nameTextBox.getText()))
-		);
 
 		listEmployeesModel = new DefaultListModel<>();
 		employeeList = new JList<>(listEmployeesModel);
 		employeeList.setName("employeeList");
-		add(employeeList);
-
-		employeeList.addListSelectionListener(e -> {
-			btnDelete.setEnabled(employeeList.getSelectedIndex() != -1);
+		
+		employeeList.setCellRenderer(new DefaultListCellRenderer() {
+			@Override
+			public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+					boolean isSelected, boolean cellHasFocus) {
+				Employee emp = (Employee) value;
+				return super.getListCellRendererComponent(list, 
+					emp != null ? emp.getId() + " - " + emp.getName() : "", 
+					index, isSelected, cellHasFocus);
+			}
 		});
+		add(new JScrollPane(employeeList));
 
 		btnDelete = new JButton("Delete Selected");
+		btnDelete.setName("btnDelete");
 		btnDelete.setEnabled(false);
 		add(btnDelete);
 
-		btnDelete.addActionListener(e -> {
-			String selectedValue = employeeList.getSelectedValue();
-			if (selectedValue != null) {
-				String[] parts = selectedValue.split(" - ");
-				employeeController.deleteEmployee(new Employee(parts[0], parts[1]));
-			}
-		});
-
-		errorMessageLabel = new JLabel("");
+		errorMessageLabel = new JLabel(" ");
 		errorMessageLabel.setName("errorMessageLabel");
 		add(errorMessageLabel);
 
-		KeyAdapter btnAddEnabler = new KeyAdapter() {
+		java.awt.event.KeyAdapter btnEnabler = new java.awt.event.KeyAdapter() {
 			@Override
-			public void keyReleased(KeyEvent e) {
-				btnAdd.setEnabled(
-					!idTextBox.getText().trim().isEmpty() &&
-					!nameTextBox.getText().trim().isEmpty()
-				);
+			public void keyReleased(java.awt.event.KeyEvent e) {
+				btnAdd.setEnabled(!idTextBox.getText().trim().isEmpty() && !nameTextBox.getText().trim().isEmpty());
 			}
 		};
+		idTextBox.addKeyListener(btnEnabler);
+		nameTextBox.addKeyListener(btnEnabler);
 
-		idTextBox.addKeyListener(btnAddEnabler);
-		nameTextBox.addKeyListener(btnAddEnabler);
-	}
-
-	public void showAllEmployees(List<Employee> employees) {
-		listEmployeesModel.clear();
-		employees.stream().forEach(employee -> listEmployeesModel.addElement(employee.getId() + " - " + employee.getName()));
-	}
-
-	public void showError(String message, Employee employee) {
-		errorMessageLabel.setText(message + ": " + employee.getId() + " - " + employee.getName());
-	}
-
-	public void showErrorEmployeeNotFound(String message, Employee employee) {
-		errorMessageLabel.setText(message + ": " + employee.getId() + " - " + employee.getName());
-		listEmployeesModel.removeElement(employee.getId() + " - " + employee.getName());
+		btnAdd.addActionListener(e -> employeeController.newEmployee(new Employee(idTextBox.getText(), nameTextBox.getText())));
+		btnDelete.addActionListener(e -> employeeController.deleteEmployee(employeeList.getSelectedValue()));
+		employeeList.addListSelectionListener(e -> btnDelete.setEnabled(employeeList.getSelectedIndex() != -1));
 	}
 
 	public void setEmployeeController(EmployeeController employeeController) {
 		this.employeeController = employeeController;
 	}
 
-	public DefaultListModel<String> getListEmployeesModel() {
+	public DefaultListModel<Employee> getListEmployeesModel() {
 		return listEmployeesModel;
 	}
 
+	@Override
+	public void showAllEmployees(List<Employee> employees) {
+		listEmployeesModel.clear();
+		employees.forEach(listEmployeesModel::addElement);
+	}
+
+	@Override
 	public void employeeAdded(Employee employee) {
-		listEmployeesModel.addElement(employee.getId() + " - " + employee.getName());
-		resetErrorLabel();
+		listEmployeesModel.addElement(employee);
+		errorMessageLabel.setText(" ");
 	}
 
+	@Override
 	public void employeeRemoved(Employee employee) {
-		listEmployeesModel.removeElement(employee.getId() + " - " + employee.getName());
-		resetErrorLabel();
+		listEmployeesModel.removeElement(employee);
+		errorMessageLabel.setText(" ");
 	}
 
-	private void resetErrorLabel() {
-		errorMessageLabel.setText("");
+	@Override
+	public void showError(String message, Employee employee) {
+		errorMessageLabel.setText(message + ": " + employee.getId() + " - " + employee.getName());
+	}
+
+	@Override
+	public void showErrorEmployeeNotFound(String message, Employee employee) {
+		errorMessageLabel.setText(message + ": " + employee.getId() + " - " + employee.getName());
+		listEmployeesModel.removeElement(employee);
 	}
 }
