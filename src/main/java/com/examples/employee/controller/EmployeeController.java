@@ -10,9 +10,9 @@ public class EmployeeController {
 	private EmployeeRepository employeeRepository;
 	private EmployeeView employeeView;
 
-	public EmployeeController(EmployeeRepository employeeRepository, EmployeeView employeeView) {
-		this.employeeRepository = employeeRepository;
+	public EmployeeController(EmployeeView employeeView, EmployeeRepository employeeRepository) {
 		this.employeeView = employeeView;
+		this.employeeRepository = employeeRepository;
 	}
 
 	public void allEmployees() {
