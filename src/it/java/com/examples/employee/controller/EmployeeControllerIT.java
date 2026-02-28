@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 import com.examples.employee.model.Employee;
@@ -61,5 +62,16 @@ public class EmployeeControllerIT {
 		employeeRepository.save(employee);
 		employeeController.allEmployees();
 		verify(employeeView).showAllEmployees(asList(employee));
+	}
+	@Test
+	public void testNewEmployee() {
+	    Employee employee = new Employee("2", "new employee");
+
+	    employeeController.newEmployee(employee);
+
+	    verify(employeeView).employeeAdded(employee);
+
+	   
+	    assertThat(employeeRepository.findById("2")).isEqualTo(employee);
 	}
 }
