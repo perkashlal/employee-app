@@ -7,9 +7,6 @@ target/
 .settings/
 bin/
 
-# Java misc
-java/
-
 # OS specific files
 .DS_Store
 Thumbs.db
