@@ -5,7 +5,10 @@ target/
 .classpath
 .project
 .settings/
-.bin
+bin/
+
+# Java misc
+java/
 
 # OS specific files
 .DS_Store
