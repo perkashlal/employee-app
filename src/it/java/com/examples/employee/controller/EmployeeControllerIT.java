@@ -74,4 +74,28 @@ public class EmployeeControllerIT {
 	   
 	    assertThat(employeeRepository.findById("2")).isEqualTo(employee);
 	}
+	@Test
+	public void testDeleteEmployee() {
+	    Employee employeeToDelete = new Employee("3", "to delete");
+	    employeeRepository.save(employeeToDelete);
+	    
+	    employeeController.deleteEmployee(employeeToDelete);
+	    
+	    verify(employeeView).employeeRemoved(employeeToDelete);
+	    
+	    assertThat(employeeRepository.findById("3")).isNull();
+	}
+	@Test
+	public void testDeleteEmployeeWhenExists() {
+	    Employee employeeToDelete = new Employee("3", "to delete");
+	    employeeRepository.save(employeeToDelete);
+	    
+	    employeeController.deleteEmployee(employeeToDelete);
+	    
+	    verify(employeeView).employeeRemoved(employeeToDelete);
+	    
+	    assertThat(employeeRepository.findById("3")).isNull();
+	}
+
+	
 }
