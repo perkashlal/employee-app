@@ -1,7 +1,6 @@
 package com.examples.employee.controller;
 
 import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 import org.junit.After;
