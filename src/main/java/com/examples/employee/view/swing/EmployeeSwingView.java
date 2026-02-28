@@ -43,6 +43,7 @@ public class EmployeeSwingView extends JFrame implements EmployeeView {
 		employeeList.setName("employeeList");
 		
 		employeeList.setCellRenderer(new DefaultListCellRenderer() {
+			private static final long serialVersionUID = 1L;
 			@Override
 			public Component getListCellRendererComponent(JList<?> list, Object value, int index,
 					boolean isSelected, boolean cellHasFocus) {
@@ -75,14 +76,17 @@ public class EmployeeSwingView extends JFrame implements EmployeeView {
 		btnAdd.addActionListener(e -> employeeController.newEmployee(new Employee(idTextBox.getText(), nameTextBox.getText())));
 		btnDelete.addActionListener(e -> employeeController.deleteEmployee(employeeList.getSelectedValue()));
 		employeeList.addListSelectionListener(e -> btnDelete.setEnabled(employeeList.getSelectedIndex() != -1));
+		
+		pack();
+	}
+
+	// This is the method your test is looking for
+	public DefaultListModel<Employee> getListEmployeesModel() {
+		return listEmployeesModel;
 	}
 
 	public void setEmployeeController(EmployeeController employeeController) {
 		this.employeeController = employeeController;
-	}
-
-	public DefaultListModel<Employee> getListEmployeesModel() {
-		return listEmployeesModel;
 	}
 
 	@Override
@@ -94,13 +98,13 @@ public class EmployeeSwingView extends JFrame implements EmployeeView {
 	@Override
 	public void employeeAdded(Employee employee) {
 		listEmployeesModel.addElement(employee);
-		errorMessageLabel.setText(" ");
+		resetErrorLabel();
 	}
 
 	@Override
 	public void employeeRemoved(Employee employee) {
 		listEmployeesModel.removeElement(employee);
-		errorMessageLabel.setText(" ");
+		resetErrorLabel();
 	}
 
 	@Override
@@ -112,5 +116,9 @@ public class EmployeeSwingView extends JFrame implements EmployeeView {
 	public void showErrorEmployeeNotFound(String message, Employee employee) {
 		errorMessageLabel.setText(message + ": " + employee.getId() + " - " + employee.getName());
 		listEmployeesModel.removeElement(employee);
+	}
+
+	private void resetErrorLabel() {
+		errorMessageLabel.setText(" ");
 	}
 }

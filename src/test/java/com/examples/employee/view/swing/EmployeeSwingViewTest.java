@@ -113,9 +113,13 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test
 	public void testEmployeeAddedShouldAddTheEmployeeToTheListAndResetTheErrorLabel() {
-		GuiActionRunner.execute(() -> employeeSwingView.employeeAdded(new Employee("1", "test1")));
+		Employee employee = new Employee("1", "test1");
+		
+		GuiActionRunner.execute(() -> employeeSwingView.employeeAdded(employee));
+		
 		assertThat(window.list().contents()).containsExactly("1 - test1");
-		window.label("errorMessageLabel").requireText(" ");
+		
+	window.label("errorMessageLabel").requireText(" ");
 	}
 
 	@Test
