@@ -3,9 +3,9 @@ package com.examples.employee.controller;
 import static org.mockito.Mockito.*;
 import static java.util.Arrays.asList;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -28,12 +28,12 @@ class EmployeeControllerTest {
 
 	private AutoCloseable closeable;
 
-	@BeforeEach
+	@Before
 	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 	}
 
-	@AfterEach
+	@After
 	void releaseMocks() throws Exception {
 		closeable.close();
 	}
