@@ -21,7 +21,6 @@ import com.mongodb.client.MongoDatabase;
 
 public class EmployeeMongoRepositoryTestcontainersIT {
 
-	// This starts the container once for all tests in this class
 	@ClassRule
 	public static final MongoDBContainer mongoDBContainer = new MongoDBContainer("mongo:4.4.3");
 
@@ -34,7 +33,6 @@ public class EmployeeMongoRepositoryTestcontainersIT {
 
 	@Before
 	public void setup() {
-		// Testcontainers provides a random connection string so there are no port conflicts
 		mongoClient = MongoClients.create(mongoDBContainer.getReplicaSetUrl());
 		
 		employeeRepository = new EmployeeMongoRepository(mongoClient, DB_NAME, COLLECTION_NAME);
@@ -87,7 +85,6 @@ public class EmployeeMongoRepositoryTestcontainersIT {
 		assertThat(readAllEmployeesFromDatabase()).isEmpty();
 	}
 
-	/* --- Helper methods for direct database interaction --- */
 
 	private void addTestEmployeeToDatabase(String id, String name) {
 		employeeCollection.insertOne(

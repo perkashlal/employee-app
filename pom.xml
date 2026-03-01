@@ -1,7 +1,7 @@
 <project
     xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.examples.employee</groupId>
     <artifactId>employee-app</artifactId>
@@ -91,6 +91,7 @@
                         <configuration>
                             <sources>
                                 <source>src/it/java</source>
+                                <source>src/e2e/java</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -113,7 +114,56 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <includes>
+                        <include>**/*IT.java</include>
+                        <include>**/*E2E.java</include>
+                    </includes>
+                </configuration>
             </plugin>
+          <plugin>
+    <groupId>io.fabric8</groupId>
+    <artifactId>docker-maven-plugin</artifactId>
+    <version>0.44.0</version>
+    <executions>
+        <execution>
+            <id>docker-build</id>
+            <phase>package</phase>
+            <goals>
+                <goal>build</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>docker-start</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+                <goal>start</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>docker-stop</id>
+            <phase>post-integration-test</phase>
+            <goals>
+                <goal>stop</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <images>
+            <image>
+                <name>employee-app:${project.version}</name>
+                <build>
+                    <from>eclipse-temurin:17-jre</from>
+                    <assembly><descriptorRef>artifact</descriptorRef></assembly>
+                    <entryPoint>java -Djava.awt.headless=true -jar /maven/${project.build.finalName}.jar</entryPoint>
+                </build>
+                <run>
+                    <wait><time>5000</time></wait>
+                </run>
+            </image>
+        </images>
+    </configuration>
+</plugin>
         </plugins>
     </build>
     <profiles>
