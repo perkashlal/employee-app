@@ -8,6 +8,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    # This is the "Smart Fix": It creates the exact environment your IT tests expect
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
     steps:
     - uses: actions/checkout@v4
     
@@ -19,4 +26,6 @@ jobs:
         cache: maven
         
     - name: Build with Maven
+      # xvfb-run: provides the virtual display for your Swing GUI
+      # -Pjacoco: activates your coverage profile from pom.xml
       run: xvfb-run mvn verify -Pjacoco -Dmaven.wagon.http.retryHandler.count=3
