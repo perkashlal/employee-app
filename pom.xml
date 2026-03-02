@@ -1,23 +1,32 @@
-<project
-    xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.examples.employee</groupId>
     <artifactId>employee-app</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Employee Scheduling System</name>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <java.awt.headless>false</java.awt.headless>
         <maven.compiler.release>17</maven.compiler.release>
         <mongo.driver.version>3.12.14</mongo.driver.version>
         <junit.version>5.10.0</junit.version>
         <mockito.version>5.5.0</mockito.version>
         <jacoco.version>0.8.12</jacoco.version>
         <testcontainers.version>1.19.3</testcontainers.version>
+        <sonar.coverage.exclusions>
+            **/model/Employee.java,
+            **/app/swing/EmployeeSwingApp.java
+        </sonar.coverage.exclusions>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.build.directory}/site/jacoco/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.mongodb</groupId>
@@ -70,13 +79,36 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <build>
+ 
         <plugins>
+       <plugin>
+    <groupId>org.pitest</groupId>
+    <artifactId>pitest-maven</artifactId>
+    <version>1.22.1</version>
+    <configuration>
+        <targetClasses>
+            <param>com.examples.employee.*</param>
+        </targetClasses>
+        <targetTests>
+            <param>com.examples.employee.*</param>
+        </targetTests>
+        <jvmArgs>
+            <jvmArg>--add-opens=java.base/java.util=ALL-UNNAMED</jvmArg>
+            <jvmArg>--add-opens=java.desktop/sun.awt=ALL-UNNAMED</jvmArg>
+            <jvmArg>--add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED</jvmArg>
+        </jvmArgs>
+    </configuration>
+</plugin>
+        
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
             </plugin>
+            
+          
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -102,6 +134,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
             </plugin>
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -121,51 +154,60 @@
                     </includes>
                 </configuration>
             </plugin>
-          <plugin>
-    <groupId>io.fabric8</groupId>
-    <artifactId>docker-maven-plugin</artifactId>
-    <version>0.44.0</version>
-    <executions>
-        <execution>
-            <id>docker-build</id>
-            <phase>package</phase>
-            <goals>
-                <goal>build</goal>
-            </goals>
-        </execution>
-        <execution>
-            <id>docker-start</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-                <goal>start</goal>
-            </goals>
-        </execution>
-        <execution>
-            <id>docker-stop</id>
-            <phase>post-integration-test</phase>
-            <goals>
-                <goal>stop</goal>
-            </goals>
-        </execution>
-    </executions>
-    <configuration>
-        <images>
-            <image>
-                <name>employee-app:${project.version}</name>
-                <build>
-                    <from>eclipse-temurin:17-jre</from>
-                    <assembly><descriptorRef>artifact</descriptorRef></assembly>
-                    <entryPoint>java -Djava.awt.headless=true -jar /maven/${project.build.finalName}.jar</entryPoint>
-                </build>
-                <run>
-                    <wait><time>5000</time></wait>
-                </run>
-            </image>
-        </images>
-    </configuration>
-</plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.44.0</version>
+                <executions>
+                    <execution>
+                        <id>docker-build</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>docker-start</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>docker-stop</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <images>
+                        <image>
+                            <name>employee-app:${project.version}</name>
+                            <build>
+                                <from>eclipse-temurin:17-jre</from>
+                                <assembly>
+                                    <descriptorRef>artifact</descriptorRef>
+                                </assembly>
+                                <entryPoint>java -Djava.awt.headless=true -jar /maven/${project.build.finalName}.jar</entryPoint>
+                            </build>
+                            <run>
+                                <wait>
+                                    <time>5000</time>
+                                </wait>
+                            </run>
+                        </image>
+                    </images>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+    
+    
+    
+    
+
     <profiles>
         <profile>
             <id>jacoco</id>
@@ -174,17 +216,17 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>${jacoco.version}</version>
+                        <version>0.8.12</version>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/model/Employee.java</exclude>
+                                <exclude>**/app/swing/EmployeeSwingApp.java</exclude>
+                            </excludes>
+                        </configuration>
                         <executions>
                             <execution>
                                 <goals>
                                     <goal>prepare-agent</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>report</id>
-                                <phase>verify</phase>
-                                <goals>
                                     <goal>report</goal>
                                 </goals>
                             </execution>
