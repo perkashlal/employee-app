@@ -54,14 +54,14 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
 
 	@Test @GUITest
 	public void testControlsInitialStates() {
-		window.label(JLabelMatcher.withText("id"));
-		window.textBox("idTextBox").requireEnabled();
-		window.label(JLabelMatcher.withText("name"));
-		window.textBox("nameTextBox").requireEnabled();
-		window.button(JButtonMatcher.withText("Add")).requireDisabled();
-		window.list("employeeList");
-		window.button(JButtonMatcher.withText("Delete Selected")).requireDisabled();
-		window.label("errorMessageLabel").requireText(" ");
+	    assertThat(window.label(JLabelMatcher.withText("id")).target().isVisible()).isTrue();
+	    assertThat(window.textBox("idTextBox").target().isEnabled()).isTrue();
+	    assertThat(window.label(JLabelMatcher.withText("name")).target().isVisible()).isTrue();
+	    assertThat(window.textBox("nameTextBox").target().isEnabled()).isTrue();
+	    assertThat(window.button(JButtonMatcher.withText("Add")).target().isEnabled()).isFalse();
+	    assertThat(window.list("employeeList").target().isVisible()).isTrue();
+	    assertThat(window.button(JButtonMatcher.withText("Delete Selected")).target().isEnabled()).isFalse();
+	    assertThat(window.label("errorMessageLabel").text()).isEqualTo(" ");
 	}
 
 
@@ -69,30 +69,30 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testWhenIdAndNameAreNonEmptyThenAddButtonShouldBeEnabled() {
 		window.textBox("idTextBox").enterText("1");
 		window.textBox("nameTextBox").enterText("test");
-		window.button(JButtonMatcher.withText("Add")).requireEnabled();
+		assertThat(window.button(JButtonMatcher.withText("Add")).target().isEnabled()).isTrue();
 	}
 
 	@Test
 	public void testAddButtonShouldBeDisabledWhenIdIsBlank() {
 		window.textBox("idTextBox").enterText(" ");
 		window.textBox("nameTextBox").enterText("test");
-		window.button(JButtonMatcher.withText("Add")).requireDisabled();
+		assertThat(window.button(JButtonMatcher.withText("Add")).target().isEnabled()).isFalse();
 	}
 
 	@Test
 	public void testAddButtonShouldBeDisabledWhenNameIsBlank() {
 		window.textBox("idTextBox").enterText("1");
 		window.textBox("nameTextBox").enterText(" ");
-		window.button(JButtonMatcher.withText("Add")).requireDisabled();
+		assertThat(window.button(JButtonMatcher.withText("Add")).target().isEnabled()).isFalse();
 	}
 
 	@Test
 	public void testDeleteButtonShouldBeEnabledOnlyWhenAnEmployeeIsSelected() {
 		GuiActionRunner.execute(() -> employeeSwingView.getListEmployeesModel().addElement(new Employee("1", "test")));
 		window.list("employeeList").selectItem(0);
-		window.button(JButtonMatcher.withText("Delete Selected")).requireEnabled();
+		assertThat(window.button(JButtonMatcher.withText("Delete Selected")).target().isEnabled()).isTrue();
 		window.list("employeeList").clearSelection();
-		window.button(JButtonMatcher.withText("Delete Selected")).requireDisabled();
+		assertThat(window.button(JButtonMatcher.withText("Delete Selected")).target().isEnabled()).isFalse();
 	}
 
 
@@ -108,18 +108,15 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
 	public void testShowErrorShouldShowTheMessageInTheErrorLabel() {
 		Employee employee = new Employee("1", "test1");
 		GuiActionRunner.execute(() -> employeeSwingView.showError("error message", employee));
-		window.label("errorMessageLabel").requireText("error message: 1 - test1");
+		assertThat(window.label("errorMessageLabel").text()).isEqualTo("error message: 1 - test1");
 	}
 
 	@Test
 	public void testEmployeeAddedShouldAddTheEmployeeToTheListAndResetTheErrorLabel() {
 		Employee employee = new Employee("1", "test1");
-		
 		GuiActionRunner.execute(() -> employeeSwingView.employeeAdded(employee));
-		
 		assertThat(window.list().contents()).containsExactly("1 - test1");
-		
-	window.label("errorMessageLabel").requireText(" ");
+		assertThat(window.label("errorMessageLabel").text()).isEqualTo(" ");
 	}
 
 	@Test
@@ -169,8 +166,7 @@ public class EmployeeSwingViewTest extends AssertJSwingJUnitTestCase {
 	    
 	    assertThat(employee.getId()).isEqualTo("99");
 	    assertThat(employee.getName()).isEqualTo("CoverUser");
-	    assertThat(employee.toString()).isEqualTo("Employee [id=99, name=CoverUser]");
-	}
+	    assertThat(employee).hasToString("Employee [id=99, name=CoverUser]");	}
 	@Test
 	public void testListCellRendererHandleNullValue() {
 	    GuiActionRunner.execute(() -> {
