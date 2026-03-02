@@ -11,20 +11,19 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <java.awt.headless>false</java.awt.headless>
         <maven.compiler.release>17</maven.compiler.release>
+        <java.awt.headless>false</java.awt.headless>
         <mongo.driver.version>3.12.14</mongo.driver.version>
         <junit.version>5.10.0</junit.version>
         <mockito.version>5.5.0</mockito.version>
         <jacoco.version>0.8.12</jacoco.version>
+        <pitest.version>1.17.0</pitest.version>
         <testcontainers.version>1.19.3</testcontainers.version>
+        
         <sonar.coverage.exclusions>
             **/model/Employee.java,
             **/app/swing/EmployeeSwingApp.java
         </sonar.coverage.exclusions>
-        <sonar.coverage.jacoco.xmlReportPaths>
-            ${project.build.directory}/site/jacoco/jacoco.xml
-        </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencies>
@@ -48,6 +47,7 @@
             <artifactId>picocli</artifactId>
             <version>4.7.5</version>
         </dependency>
+
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mongodb</artifactId>
@@ -58,6 +58,12 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
             <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -81,34 +87,51 @@
     </dependencies>
 
     <build>
- 
         <plugins>
-       <plugin>
+            <plugin>
     <groupId>org.pitest</groupId>
     <artifactId>pitest-maven</artifactId>
-    <version>1.22.1</version>
+    <version>${pitest.version}</version>
+    <dependencies>
+        <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-junit5-plugin</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+    </dependencies>
     <configuration>
         <targetClasses>
-            <param>com.examples.employee.*</param>
+            <param>com.examples.employee.controller.*</param>
+            <param>com.examples.employee.repository.*</param>
+            <param>com.examples.employee.model.*</param>
         </targetClasses>
         <targetTests>
             <param>com.examples.employee.*</param>
         </targetTests>
+        <excludedTestClasses>
+            <param>com.examples.employee.view.swing.EmployeeSwingViewTest</param>
+            <param>com.examples.employee.**.*IT</param>
+            <param>com.examples.employee.**.*E2E</param>
+        </excludedTestClasses>
         <jvmArgs>
             <jvmArg>--add-opens=java.base/java.util=ALL-UNNAMED</jvmArg>
             <jvmArg>--add-opens=java.desktop/sun.awt=ALL-UNNAMED</jvmArg>
             <jvmArg>--add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED</jvmArg>
+            <jvmArg>--add-opens=java.desktop/java.awt=ALL-UNNAMED</jvmArg>
+            <jvmArg>--add-opens=java.desktop/javax.swing=ALL-UNNAMED</jvmArg>
+            <jvmArg>--add-opens=java.desktop/sun.swing=ALL-UNNAMED</jvmArg>
+            <jvmArg>-Djava.awt.headless=false</jvmArg>
         </jvmArgs>
+        <mutationThreshold>85</mutationThreshold>
     </configuration>
 </plugin>
-        
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
             </plugin>
-            
-          
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -129,16 +152,17 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.5.5</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -154,86 +178,6 @@
                     </includes>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>io.fabric8</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>0.44.0</version>
-                <executions>
-                    <execution>
-                        <id>docker-build</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>docker-start</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>docker-stop</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <images>
-                        <image>
-                            <name>employee-app:${project.version}</name>
-                            <build>
-                                <from>eclipse-temurin:17-jre</from>
-                                <assembly>
-                                    <descriptorRef>artifact</descriptorRef>
-                                </assembly>
-                                <entryPoint>java -Djava.awt.headless=true -jar /maven/${project.build.finalName}.jar</entryPoint>
-                            </build>
-                            <run>
-                                <wait>
-                                    <time>5000</time>
-                                </wait>
-                            </run>
-                        </image>
-                    </images>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-    
-    
-    
-    
-
-    <profiles>
-        <profile>
-            <id>jacoco</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.12</version>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/model/Employee.java</exclude>
-                                <exclude>**/app/swing/EmployeeSwingApp.java</exclude>
-                            </excludes>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                    <goal>report</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
