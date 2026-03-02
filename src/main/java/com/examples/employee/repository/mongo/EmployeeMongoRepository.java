@@ -1,13 +1,9 @@
 package com.examples.employee.repository.mongo;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 import java.util.stream.StreamSupport;
-import com.mongodb.client.MongoClient;
-import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.MongoClients;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import com.examples.employee.model.Employee;
@@ -28,7 +24,7 @@ public class EmployeeMongoRepository implements EmployeeRepository {
 		return StreamSupport.
 			stream(employeeCollection.find().spliterator(), false)
 			.map(this::fromDocumentToEmployee)
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	@Override
