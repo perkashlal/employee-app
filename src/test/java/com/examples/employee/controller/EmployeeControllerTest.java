@@ -13,9 +13,9 @@ import com.examples.employee.model.Employee;
 import com.examples.employee.repository.EmployeeRepository;
 import com.examples.employee.view.EmployeeView;
 import org.mockito.InOrder;
-import static org.mockito.Mockito.inOrder;
+import static org.mockito.ArgumentMatchers.any;
 
-class EmployeeControllerTest {
+public class EmployeeControllerTest { 
 
 	@Mock
 	private EmployeeRepository employeeRepository;
@@ -29,17 +29,17 @@ class EmployeeControllerTest {
 	private AutoCloseable closeable;
 
 	@Before
-	void setup() {
+	public void setup() { // Added public
 		closeable = MockitoAnnotations.openMocks(this);
 	}
 
 	@After
-	void releaseMocks() throws Exception {
+	public void releaseMocks() throws Exception { // Added public
 		closeable.close();
 	}
 
 	@Test
-	void testAllEmployees() {
+	public void testAllEmployees() { // Added public
 		List<Employee> employees = asList(new Employee("1", "test"));
 		when(employeeRepository.findAll()).thenReturn(employees);
 		
@@ -47,51 +47,52 @@ class EmployeeControllerTest {
 		
 		verify(employeeView).showAllEmployees(employees);
 	}
-	@Test
-	void testNewEmployeeWhenEmployeeDoesNotAlreadyExist() {
-	    Employee employee = new Employee("1", "test");
-	    when(employeeRepository.findById("1")).thenReturn(null);
-	    
-	    employeeController.newEmployee(employee);
-	    
-	    InOrder inOrder = inOrder(employeeRepository, employeeView);
-	    inOrder.verify(employeeRepository).save(employee);
-	    inOrder.verify(employeeView).employeeAdded(employee);
-	}
-	@Test
-	public void testNewEmployeeWhenEmployeeAlreadyExists() {
-	    Employee employeeToAdd = new Employee("1", "test");
-	    Employee existingEmployee = new Employee("1", "name");
-	    
-	    when(employeeRepository.findById("1")).thenReturn(existingEmployee);
-	    
-	    employeeController.newEmployee(employeeToAdd);
-	    
-	    verify(employeeView)
-	        .showError("Already existing employee with id 1", existingEmployee);
-	    verifyNoMoreInteractions(ignoreStubs(employeeRepository));
-	}
-	@Test
-	void testDeleteEmployeeWhenEmployeeExists() {
-	    Employee employeeToDelete = new Employee("1", "test");
-	    when(employeeRepository.findById("1")).thenReturn(employeeToDelete);
-	    
-	    employeeController.deleteEmployee(employeeToDelete);
-	    
-	    InOrder inOrder = inOrder(employeeRepository, employeeView);
-	    inOrder.verify(employeeRepository).delete("1");
-	    inOrder.verify(employeeView).employeeRemoved(employeeToDelete);
-	}
-	@Test
-	void testDeleteEmployeeWhenEmployeeDoesNotExist() {
-	    Employee employee = new Employee("1", "test");
-	    when(employeeRepository.findById("1")).thenReturn(null);
-	    
-	    employeeController.deleteEmployee(employee);
-	    
-	    verify(employeeView)
-	        .showError("No existing employee with id 1", employee);
-	    verifyNoMoreInteractions(ignoreStubs(employeeRepository));
-	}
 	
+	@Test
+	public void testNewEmployeeWhenEmployeeDoesNotAlreadyExist() {
+		Employee employee = new Employee("1", "test");
+		when(employeeRepository.findById("1")).thenReturn(null);
+		
+		employeeController.newEmployee(employee);
+		
+		verify(employeeRepository).save(employee);
+		verify(employeeView).employeeAdded(employee);
+	}
+
+	@Test
+	public void testNewEmployeeWhenEmployeeAlreadyExistsShouldShowErrorAndReturn() {
+		Employee employeeToAdd = new Employee("1", "new");
+		Employee existingEmployee = new Employee("1", "existing");
+		when(employeeRepository.findById("1")).thenReturn(existingEmployee);
+
+		employeeController.newEmployee(employeeToAdd);
+
+		verify(employeeView).showError("Already existing employee with id 1", existingEmployee);
+		verify(employeeRepository, never()).save(any());
+		verify(employeeView, never()).employeeAdded(any());
+	}
+
+	@Test
+	public void testDeleteEmployeeWhenEmployeeExists() {
+		Employee employeeToDelete = new Employee("1", "test");
+		when(employeeRepository.findById("1")).thenReturn(employeeToDelete);
+		
+		employeeController.deleteEmployee(employeeToDelete);
+		
+		InOrder inOrder = inOrder(employeeRepository, employeeView);
+		inOrder.verify(employeeRepository).delete("1");
+		inOrder.verify(employeeView).employeeRemoved(employeeToDelete);
+	}
+
+	@Test
+	public void testDeleteEmployeeWhenEmployeeDoesNotExist() {
+		Employee employee = new Employee("1", "test");
+		when(employeeRepository.findById("1")).thenReturn(null);
+		
+		// FIXED: Call deleteEmployee instead of newEmployee
+		employeeController.deleteEmployee(employee);
+		
+		verify(employeeView).showError("No existing employee with id 1", employee);
+		verifyNoMoreInteractions(ignoreStubs(employeeRepository));
+	}
 }
