@@ -1,38 +1,31 @@
 name: Java CI with Maven, Docker and SonarCloud in Linux
-
 on:
   push:
   pull_request:
-
 jobs:
   build:
     env:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     runs-on: ubuntu-latest
-
     services:
       mongodb:
         image: mongo:4.4.3
         ports:
           - 27017:27017
-
     steps:
     - uses: actions/checkout@v4
       with:
         # Shallow clones disabled for a better relevancy of SonarQube analysis
         fetch-depth: 0
-
     - name: Set up JDK
       uses: actions/setup-java@v4
       with:
         java-version: 17
         distribution: 'temurin'
-
     - name: Install Linux GUI Dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y xvfb libgtk-3-0
-
     - name: Cache Maven packages
       uses: actions/cache@v4
       with:
@@ -41,16 +34,14 @@ jobs:
           ~/.sonar/cache
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/*.yml') }}
         restore-keys: ${{ runner.os }}-m2-
-
-    - name: Set Maven Additional Goals
-      run: |
-        echo "SONARGOAL=sonar:sonar" >> $GITHUB_ENV
-      if: ${{ env.SONAR_TOKEN }}
-
-    - name: Build with Maven and SonarCloud
-      # Removed 'working-directory' because pom.xml is in the root
+    - name: Build and Test with JaCoCo
+      run: xvfb-run mvn verify -Pjacoco
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: SonarCloud Analysis
+      if: env.SONAR_TOKEN != ''
       run: >
-        xvfb-run mvn verify -Pjacoco $SONARGOAL
+        mvn sonar:sonar
         -Dsonar.organization=perkashlal
         -Dsonar.host.url=https://sonarcloud.io
         -Dsonar.projectKey=perkashlal_employee-app
