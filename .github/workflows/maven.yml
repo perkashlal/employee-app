@@ -2,6 +2,7 @@ name: Java CI with Maven, Docker and SonarCloud in Linux
 
 on:
   push:
+    branches: [ main, master ]
   pull_request:
 
 jobs:
@@ -26,18 +27,16 @@ jobs:
         distribution: 'temurin'
         cache: 'maven'
 
-    - name: Install GUI Dependencies
+    - name: Install Linux GUI Dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y xvfb libgtk-3-0
 
     - name: Set Maven Additional Goals
-      # This is the "switch" your professor uses
       run: echo "SONARGOAL=sonar:sonar" >> $GITHUB_ENV
       if: ${{ secrets.SONAR_TOKEN }}
 
     - name: Build with Maven and SonarCloud
-      # We use the keys you verified earlier: perkashlal and perkashlal_employee-app
       run: >
         xvfb-run mvn verify -Pjacoco $SONARGOAL
         -Dsonar.organization=perkashlal
