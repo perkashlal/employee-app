@@ -20,6 +20,13 @@
         <pitest.version>1.17.0</pitest.version>
         <testcontainers.version>1.19.3</testcontainers.version>
         
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.build.directory}/site/jacoco/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.pitest.mode>reuseReport</sonar.pitest.mode>
+        <sonar.pitest.reportsDirectory>
+            ${project.build.directory}/pit-reports
+        </sonar.pitest.reportsDirectory>
         <sonar.coverage.exclusions>
             **/model/Employee.java,
             **/app/swing/EmployeeSwingApp.java
@@ -84,52 +91,41 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.36</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-    <groupId>org.pitest</groupId>
-    <artifactId>pitest-maven</artifactId>
-    <version>${pitest.version}</version>
-    <dependencies>
-        <dependency>
-            <groupId>org.pitest</groupId>
-            <artifactId>pitest-junit5-plugin</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-    </dependencies>
-    <configuration>
-        <targetClasses>
-            <param>com.examples.employee.controller.*</param>
-            <param>com.examples.employee.repository.*</param>
-            <param>com.examples.employee.model.*</param>
-        </targetClasses>
-        <targetTests>
-            <param>com.examples.employee.*</param>
-        </targetTests>
-        <excludedTestClasses>
-            <param>com.examples.employee.view.swing.EmployeeSwingViewTest</param>
-            <param>com.examples.employee.**.*IT</param>
-            <param>com.examples.employee.**.*E2E</param>
-        </excludedTestClasses>
-        <jvmArgs>
-            <jvmArg>--add-opens=java.base/java.util=ALL-UNNAMED</jvmArg>
-            <jvmArg>--add-opens=java.desktop/sun.awt=ALL-UNNAMED</jvmArg>
-            <jvmArg>--add-opens=java.desktop/javax.swing.plaf.basic=ALL-UNNAMED</jvmArg>
-            <jvmArg>--add-opens=java.desktop/java.awt=ALL-UNNAMED</jvmArg>
-            <jvmArg>--add-opens=java.desktop/javax.swing=ALL-UNNAMED</jvmArg>
-            <jvmArg>--add-opens=java.desktop/sun.swing=ALL-UNNAMED</jvmArg>
-            <jvmArg>-Djava.awt.headless=false</jvmArg>
-        </jvmArgs>
-        <mutationThreshold>85</mutationThreshold>
-    </configuration>
-</plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <formats>
+                                <format>XML</format>
+                                <format>HTML</format>
+                            </formats>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -157,25 +153,89 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+                <configuration>
+                    <argLine>
+                        @{argLine}
+                        --add-opens java.base/java.util=ALL-UNNAMED
+                        --add-opens java.desktop/sun.awt=ALL-UNNAMED
+                        --add-opens java.desktop/javax.swing.plaf.basic=ALL-UNNAMED
+                    </argLine>
+                </configuration>
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.5.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-failsafe-plugin</artifactId>
+    <version>3.5.0</version>
+    <executions>
+        <execution>
+            <id>integration-tests</id>
+            <goals>
+                <goal>integration-test</goal>
+            </goals>
+            <configuration>
+                <includes>
+                    <include>**/*IT.java</include>
+                </includes>
+            </configuration>
+        </execution>
+        <execution>
+            <id>e2e-tests</id>
+            <goals>
+                <goal>integration-test</goal>
+            </goals>
+            <configuration>
+                <includes>
+                    <include>**/*E2E.java</include>
+                </includes>
+            </configuration>
+        </execution>
+        <execution>
+            <id>verify</id>
+            <goals>
+                <goal>verify</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <argLine>
+            --add-opens java.base/java.util=ALL-UNNAMED
+            --add-opens java.desktop/sun.awt=ALL-UNNAMED
+        </argLine>
+    </configuration>
+</plugin>
+
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>${pitest.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>1.2.1</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
-                    <includes>
-                        <include>**/*IT.java</include>
-                        <include>**/*E2E.java</include>
-                    </includes>
+                    <targetClasses>
+                        <param>com.examples.employee.controller.*</param>
+                        <param>com.examples.employee.repository.*</param>
+                        <param>com.examples.employee.model.*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>com.examples.employee.*</param>
+                    </targetTests>
+                    <excludedTestClasses>
+                        <param>com.examples.employee.view.swing.EmployeeSwingViewTest</param>
+                        <param>com.examples.employee.**.*IT</param>
+                        <param>com.examples.employee.**.*E2E</param>
+                    </excludedTestClasses>
+                    <jvmArgs>
+                        <jvmArg>--add-opens=java.base/java.util=ALL-UNNAMED</jvmArg>
+                        <jvmArg>--add-opens=java.desktop/sun.awt=ALL-UNNAMED</jvmArg>
+                        <jvmArg>-Djava.awt.headless=false</jvmArg>
+                    </jvmArgs>
+                    <mutationThreshold>85</mutationThreshold>
                 </configuration>
             </plugin>
         </plugins>
