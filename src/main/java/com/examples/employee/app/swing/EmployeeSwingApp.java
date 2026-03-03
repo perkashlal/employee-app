@@ -2,6 +2,7 @@ package com.examples.employee.app.swing;
 
 import java.awt.EventQueue;
 import java.util.concurrent.Callable;
+import javax.swing.JOptionPane;
 
 import com.examples.employee.controller.EmployeeController;
 import com.examples.employee.repository.mongo.EmployeeMongoRepository;
@@ -50,8 +51,9 @@ public class EmployeeSwingApp implements Callable<Void> {
 				view.setVisible(true);
 				controller.allEmployees();
 				
-			} catch (Exception e) {
-				e.printStackTrace();
+			}catch (Exception e) {
+			    JOptionPane.showMessageDialog(null, "An error occurred: " + e.getMessage(), 
+			                                  "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		return null;
