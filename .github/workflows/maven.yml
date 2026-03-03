@@ -19,7 +19,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        # Shallow clones disabled for better relevancy of SonarQube analysis
+        # Shallow clones disabled for a better relevancy of SonarQube analysis
         fetch-depth: 0
 
     - name: Set up JDK
@@ -45,16 +45,15 @@ jobs:
     - name: Set Maven Additional Goals
       run: |
         echo "SONARGOAL=sonar:sonar" >> $GITHUB_ENV
-      # This matches the professor's logic exactly
       if: ${{ env.SONAR_TOKEN }}
 
     - name: Build with Maven and SonarCloud
+      # Removed 'working-directory' because pom.xml is in the root
       run: >
         xvfb-run mvn verify -Pjacoco $SONARGOAL
         -Dsonar.organization=perkashlal
         -Dsonar.host.url=https://sonarcloud.io
         -Dsonar.projectKey=perkashlal_employee-app
-      working-directory: com.examples.employee
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
