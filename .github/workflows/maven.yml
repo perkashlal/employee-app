@@ -33,8 +33,14 @@ jobs:
         sudo apt-get install -y xvfb libgtk-3-0
 
     - name: Set Maven Additional Goals
-      run: echo "SONARGOAL=sonar:sonar" >> $GITHUB_ENV
-      if: ${{ secrets.SONAR_TOKEN }}
+      # We use the env context to check the token, which is safer and valid
+      shell: bash
+      run: |
+        if [ -n "$SONAR_TOKEN" ]; then
+          echo "SONARGOAL=sonar:sonar" >> $GITHUB_ENV
+        fi
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     - name: Build with Maven and SonarCloud
       run: >
