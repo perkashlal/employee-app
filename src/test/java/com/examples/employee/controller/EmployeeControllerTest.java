@@ -114,7 +114,8 @@ public class EmployeeControllerTest {
 		assertThat(e1).isEqualTo(e2);
 		assertThat(e1).isNotEqualTo(e3);
 		assertThat(e1).isNotEqualTo(null);
-		assertThat(e1).isNotEqualTo("string");
+		Object notAnEmployee = new Object();
+		assertThat(e1).isNotEqualTo(notAnEmployee);
 		assertThat(e1.hashCode()).isEqualTo(e2.hashCode());
 		assertThat(e1.hashCode()).isNotEqualTo(e3.hashCode());
 	}
