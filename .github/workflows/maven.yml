@@ -10,6 +10,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    # This provides the fixed port 27017 your ControllerIT expects
+    services:
+      mongodb:
+        image: mongo:4.4.3
+        ports:
+          - 27017:27017
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
@@ -22,6 +29,7 @@ jobs:
         cache: maven
 
     - name: Install Linux GUI Dependencies
+      # Fixes the "HeadlessException" for Swing/AssertJ
       run: |
         sudo apt-get update
         sudo apt-get install -y xvfb libgtk-3-0 libcanberra-gtk-module
