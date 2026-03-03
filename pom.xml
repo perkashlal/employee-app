@@ -19,15 +19,15 @@
         <jacoco.version>0.8.12</jacoco.version>
         <pitest.version>1.17.0</pitest.version>
         <testcontainers.version>1.19.3</testcontainers.version>
+        
         <sonar.organization>perkashlal</sonar.organization>
+    <sonar.organization>perkashlal</sonar.organization>
+    <sonar.projectKey>perkashlal_employee-app</sonar.projectKey>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    
     <sonar.coverage.jacoco.xmlReportPaths>
         ${project.build.directory}/site/jacoco/jacoco.xml
     </sonar.coverage.jacoco.xmlReportPaths>
-        
-        <sonar.coverage.jacoco.xmlReportPaths>
-            ${project.build.directory}/site/jacoco/jacoco.xml
-        </sonar.coverage.jacoco.xmlReportPaths>
         <sonar.pitest.mode>reuseReport</sonar.pitest.mode>
         <sonar.pitest.reportsDirectory>
             ${project.build.directory}/pit-reports
