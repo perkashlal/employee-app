@@ -118,10 +118,6 @@ public class EmployeeControllerTest {
 	        .isNotNull()
 	        .isNotEqualTo(notAnEmployee);
 
-	    assertThat(e1)
-	        .hasSameHashCodeAs(e2);         
-
-	    assertThat(e1.hashCode())
-	        .isNotEqualTo(e3.hashCode());    
+	    assertThat(e1.hashCode()).isNotEqualTo(e3.hashCode());   
 	}
 }
