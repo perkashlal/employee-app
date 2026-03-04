@@ -70,6 +70,7 @@ public class EmployeeSwingViewIT extends AssertJSwingJUnitTestCase {
 		window.textBox("idTextBox").enterText("1");
 		window.textBox("nameTextBox").enterText("lal");
 		window.button("btnAdd").click(); 
+		org.assertj.swing.timing.Pause.pause(2000);
 		assertThat(window.list().contents()).containsExactly("1 - lal");
 	}
 
