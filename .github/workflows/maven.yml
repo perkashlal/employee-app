@@ -15,7 +15,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        # Shallow clones disabled for a better relevancy of SonarQube analysis
         fetch-depth: 0
     - name: Set up JDK
       uses: actions/setup-java@v4
@@ -49,3 +48,7 @@ jobs:
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+   
+    - name: Coveralls Report
+      run: mvn coveralls:report -DrepoToken=${{ secrets.COVERALLS_REPO_TOKEN }}
