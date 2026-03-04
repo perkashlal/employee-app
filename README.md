@@ -2,8 +2,7 @@
 
 ![Build Status](https://github.com/perkashlal/employee-app/actions/workflows/maven.yml/badge.svg)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=perkashlal_employee-app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=perkashlal_employee-app)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=perkashlal_employee-app&metric=coverage)](https://sonarcloud.io/summary/new_code?id=perkashlal_employee-app)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=perkashlal_employee-app&metric=bugs)](https://sonarcloud.io/summary/new_code?id=perkashlal_employee-app)
+[![Coverage](https://img.shields.io/endpoint?url=https://sonarcloud.io/api/project_badges/measure?project=perkashlal_employee-app&metric=coverage&color=brightgreen)](https://sonarcloud.io/summary/new_code?id=perkashlal_employee-app)[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=perkashlal_employee-app&metric=bugs)](https://sonarcloud.io/summary/new_code?id=perkashlal_employee-app)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=perkashlal_employee-app&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=perkashlal_employee-app)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=perkashlal_employee-app&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=perkashlal_employee-app)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=perkashlal_employee-app&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=perkashlal_employee-app)
