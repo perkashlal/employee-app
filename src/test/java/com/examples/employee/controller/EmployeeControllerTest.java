@@ -107,16 +107,21 @@ public class EmployeeControllerTest {
 
 	@Test
 	public void testEmployeeModelMethodsForCoverage() {
-		Employee e1 = new Employee("1", "test");
-		Employee e2 = new Employee("1", "test");
-		Employee e3 = new Employee("2", "other");
-		
-		assertThat(e1).isEqualTo(e2);
-		assertThat(e1).isNotEqualTo(e3);
-		assertThat(e1).isNotEqualTo(null);
-		Object notAnEmployee = new Object();
-		assertThat(e1).isNotEqualTo(notAnEmployee);
-		assertThat(e1.hashCode()).isEqualTo(e2.hashCode());
-		assertThat(e1.hashCode()).isNotEqualTo(e3.hashCode());
+	    Employee e1 = new Employee("1", "test");
+	    Employee e2 = new Employee("1", "test");
+	    Employee e3 = new Employee("2", "other");
+	    Object notAnEmployee = new Object();
+
+	    assertThat(e1)
+	        .isEqualTo(e2)
+	        .isNotEqualTo(e3)
+	        .isNotNull()
+	        .isNotEqualTo(notAnEmployee);
+
+	    assertThat(e1)
+	        .hasSameHashCodeAs(e2);         
+
+	    assertThat(e1.hashCode())
+	        .isNotEqualTo(e3.hashCode());    
 	}
 }

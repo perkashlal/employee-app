@@ -89,8 +89,9 @@ class EmployeeMongoRepositoryTest {
         verify(mongoCollection).insertOne(captor.capture());
         
         Document captured = captor.getValue();
-        assertThat(captured.get("id")).isEqualTo("1");
-        assertThat(captured.get("name")).isEqualTo("John");
+        assertThat(captured)
+        .containsEntry("id", "1")
+        .containsEntry("name", "John");
     }
 
     @Test
